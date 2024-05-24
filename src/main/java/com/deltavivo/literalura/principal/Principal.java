@@ -4,6 +4,7 @@ import com.deltavivo.literalura.model.Autor;
 import com.deltavivo.literalura.model.DadosListaLivros;
 import com.deltavivo.literalura.model.DadosLivro;
 import com.deltavivo.literalura.model.Livro;
+import com.deltavivo.literalura.repository.AutorRepository;
 import com.deltavivo.literalura.repository.LivroRepository;
 import com.deltavivo.literalura.service.ConsumoApi;
 import com.deltavivo.literalura.service.ConverteDados;
@@ -18,14 +19,14 @@ public class Principal {
     private ConverteDados conversor = new ConverteDados();
     private final String URL_BASE = "https://gutendex.com/books/";
 
-    private List<Livro> livros = new ArrayList<>();
+    private final List<DadosLivro> dadosLivros = new ArrayList<>();
 
-    private List<DadosLivro> dadosLivros = new ArrayList<>();
+    private LivroRepository livroRepository;
+    private AutorRepository autorRepository;
 
-    private LivroRepository repository;
-
-    public Principal(LivroRepository repository) {
-        this.repository = repository;
+    public Principal(LivroRepository livroRepository, AutorRepository autorRepository) {
+        this.livroRepository = livroRepository;
+        this.autorRepository = autorRepository;
     }
 
     public void exibeMenu() {
@@ -94,7 +95,7 @@ public class Principal {
         DadosListaLivros dadosLivroEscolhido = null;
 
 
-        var verifica = repository.findByTituloContainingIgnoreCase(nomeLivro);
+        var verifica = livroRepository.findByTituloContainingIgnoreCase(nomeLivro);
 
         if(verifica.isPresent()){
             System.out.printf("\nLivro ja cadastrada no banco!\n");
@@ -120,7 +121,7 @@ public class Principal {
 
                 var livro = new Livro(l);
                 livro.setAutores(autores);
-                repository.save(livro);
+                livroRepository.save(livro);
 
                 System.out.println(dadosLivroEscolhido);
             }
@@ -129,30 +130,49 @@ public class Principal {
     }
 
     private void buscarLivroPorAutor() {
+        var autores = autorRepository.findAll();
+        autores.forEach(System.out::println);
+
+        System.out.print("Escolha qual autor quer procurar: \n");
+        var nomeAutor = leitura.nextLine();
+
+        var livros = livroRepository.findAllByAutor(nomeAutor);
+        livros.forEach(System.out::println);
+
     }
 
     private void listarLivrosMaisBaixados() {
+        List<Livro> livros = livroRepository.findTop5OrderByDonwloads();
+        livros.forEach(System.out::println);
     }
 
     private void listarTodosOsLivros() {
-        livros = repository.findAll();
+        List<Livro> livros = livroRepository.findAll();
 
         if(livros.isEmpty()){
-            System.out.printf("Nenhum livro cadastrado.\n");
+            System.out.print("Nenhum livro cadastrado.\n");
         }else {
 
             livros.stream()
                     .sorted(Comparator.comparing(Livro::getId))
                     .forEach(System.out::println);
 
-            //2dadosLivros.forEach(System.out::println);
         }
     }
 
     private void listarAutores() {
+        List<Autor> autores = autorRepository.findAll();
+        autores.forEach(System.out::println);
     }
 
     private void listarAutoresVivosPorAno() {
+        List<Autor> autores = autorRepository.findByAuthorsAlive(1900);
+
+        if(!autores.isEmpty()) {
+            autores.forEach(System.out::println);
+        }else{
+            System.out.printf("Nao existem livros com autores vivos.");
+        }
     }
 
 

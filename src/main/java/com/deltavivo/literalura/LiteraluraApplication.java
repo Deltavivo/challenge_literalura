@@ -1,6 +1,7 @@
 package com.deltavivo.literalura;
 
 import com.deltavivo.literalura.principal.Principal;
+import com.deltavivo.literalura.repository.AutorRepository;
 import com.deltavivo.literalura.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class LiteraluraApplication implements CommandLineRunner {
 
 	@Autowired
-	private LivroRepository repository;
+	private LivroRepository livroRepository;
+
+	@Autowired
+	private AutorRepository autorRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(LiteraluraApplication.class, args);
@@ -19,7 +23,7 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Principal principal = new Principal(repository);
+		Principal principal = new Principal(livroRepository, autorRepository);
 		principal.exibeMenu();
 	}
 }
