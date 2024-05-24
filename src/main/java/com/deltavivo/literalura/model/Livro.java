@@ -20,7 +20,7 @@ public class Livro {
     @Column(unique = true)
     private String titulo;
 
-    private List<String> linguagem;
+    private String linguagem;
     private Long donwloads;
 
     @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -30,9 +30,8 @@ public class Livro {
 
     public Livro(DadosListaLivros dadosLivro){
         this.titulo = dadosLivro.livros().get(0).titulo();
-        this.linguagem = dadosLivro.livros().get(0).linguagens();
+        this.linguagem = String.valueOf(dadosLivro.livros().get(0).linguagens());
         this.donwloads =  dadosLivro.livros().get(0).donwloads();
-        //this.autores.forEach(a -> dadosLivro.livros().get(0).autores());
     }
 
     @Override
@@ -49,5 +48,6 @@ public class Livro {
         autores.forEach(a -> a.setLivro(this));
         this.autores = autores;
     }
+
 }
 

@@ -17,4 +17,7 @@ LivroRepository extends JpaRepository<Livro, Long> {
 
     @Query("SELECT l FROM Livro l ORDER BY l.donwloads DESC LIMIT 5 ")
     List<Livro> findTop5OrderByDonwloads();
+
+    @Query("SELECT l FROM Livro l WHERE l.linguagem ILIKE %:idioma%")
+    List<Livro> findAllByLinguagem(List<String> idioma);
 }

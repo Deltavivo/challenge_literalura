@@ -40,6 +40,7 @@ public class Principal {
                     4 - Buscar livro por autor
                     5 - Listar autores
                     6 - Listar autores vivos por ano
+                    7 - Listar livro por idioma
                     0 - Sair
                     """;
 
@@ -66,6 +67,9 @@ public class Principal {
                     break;
                 case 6:
                     listarAutoresVivosPorAno();
+                    break;
+                case 7:
+                    listarLivrosPorIdioma();
                     break;
 
                 case 0:
@@ -166,13 +170,26 @@ public class Principal {
     }
 
     private void listarAutoresVivosPorAno() {
-        List<Autor> autores = autorRepository.findByAuthorsAlive(1900);
+
+        System.out.print("Escolha qual ano deseja buscar autores vivos: \n");
+        var ano = leitura.nextLine();
+        List<Autor> autores = autorRepository.findByAuthorsAlive(Integer.getInteger(ano.trim()));
 
         if(!autores.isEmpty()) {
             autores.forEach(System.out::println);
         }else{
             System.out.printf("Nao existem livros com autores vivos.");
         }
+    }
+
+    private void listarLivrosPorIdioma(){
+        System.out.print("Escolha o idioma para procurar (en,pt,br) : \n");
+        var idioma = leitura.nextLine();
+
+        List<String> i = new ArrayList<>();
+        i.add(idioma);
+        List<Livro> livros = livroRepository.findAllByLinguagem(i);
+        livros.forEach(System.out::println);
     }
 
 
